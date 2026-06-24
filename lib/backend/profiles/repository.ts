@@ -1,4 +1,4 @@
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 
 import {
   dynamoDbDocumentClient,
@@ -57,4 +57,15 @@ export async function createProfile(input: ProfileInput) {
   }
 
   throw new Error("Failed to create a unique profile identifier.");
+}
+
+export async function getProfileById(id: string) {
+  const result = await dynamoDbDocumentClient.send(
+    new GetCommand({
+      TableName: getProfilesTableName(),
+      Key: { id },
+    })
+  );
+
+  return (result.Item as ProfileRecord | undefined) ?? null;
 }

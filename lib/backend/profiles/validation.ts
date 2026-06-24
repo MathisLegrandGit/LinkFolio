@@ -182,4 +182,12 @@ export function parseEditToken(value: unknown) {
   });
 }
 
+export function parseProfileId(value: unknown) {
+  return ensureTrimmedString(value, "id", {
+    required: true,
+    minLength: 1,
+    maxLength: 128,
+  });
+}
+
 export { profileRules };

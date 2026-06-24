@@ -262,3 +262,46 @@ Remaining tasks:
 - verify the create route with lint and type checks;
 - create the public profile read route;
 - create the protected update route.
+
+### Session 3 - 2026-06-24
+
+Objective:
+- implement the public backend endpoint that reads a profile by id.
+
+Actions completed:
+- added a repository read function based on DynamoDB `GetCommand`;
+- added backend validation for the profile id parameter;
+- implemented `GET /api/profiles/[id]` to return a public profile by id only;
+- kept `editToken` excluded from the public response.
+
+Files created:
+- `app/api/profiles/[id]/route.ts`
+
+Files updated:
+- `lib/backend/profiles/repository.ts`
+- `lib/backend/profiles/validation.ts`
+
+Key decisions:
+- use `GET /api/profiles/[id]` as the public read endpoint;
+- return `404` when the profile does not exist;
+- reuse the public serializer so the private `editToken` never leaks through the public API;
+- validate the route param before querying DynamoDB.
+
+Response contract chosen for now:
+- success status: `200`
+- success body:
+  - `profile`: public profile object without `editToken`
+
+Error handling:
+- `400` if the id parameter is invalid
+- `404` if no profile exists for that id
+- `500` if the DynamoDB read or another backend operation fails
+
+Checks to run:
+- lint
+- TypeScript check
+
+Remaining tasks:
+- verify the read route with lint and type checks;
+- create the protected update route;
+- test the create and read flow against a real AWS-backed local environment.
