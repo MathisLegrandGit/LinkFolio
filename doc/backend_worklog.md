@@ -217,3 +217,48 @@ Remaining tasks:
 - create the profile creation route;
 - create the public profile read route;
 - create the protected update route.
+
+### Session 2 - 2026-06-24
+
+Objective:
+- implement the backend endpoint that creates a profile.
+
+Actions completed:
+- added secure profile id generation;
+- added secure edit token generation;
+- added a serializer to expose only the public profile shape;
+- added the profile creation repository write flow for DynamoDB;
+- implemented `POST /api/profiles` as the first backend route handler.
+
+Files created:
+- `app/api/profiles/route.ts`
+- `lib/backend/profiles/ids.ts`
+- `lib/backend/profiles/serializers.ts`
+- `lib/backend/profiles/repository.ts`
+
+Key decisions:
+- use `POST /api/profiles` as the collection endpoint for profile creation;
+- force the route to run on the Node.js runtime because it depends on the AWS SDK;
+- use DynamoDB conditional writes to avoid accidental id collisions;
+- return `editToken` separately from the public profile object so the private secret is not mixed into public profile data;
+- return backend validation issues in `400` responses, but keep `500` errors generic.
+
+Response contract chosen for now:
+- success status: `201`
+- success body:
+  - `profile`: public profile object without `editToken`
+  - `editToken`: secret token required for future edits
+
+Error handling:
+- `400` if JSON is invalid
+- `400` if the payload fails validation
+- `500` if DynamoDB write or another unexpected backend error fails
+
+Checks to run:
+- lint
+- TypeScript check
+
+Remaining tasks:
+- verify the create route with lint and type checks;
+- create the public profile read route;
+- create the protected update route.
