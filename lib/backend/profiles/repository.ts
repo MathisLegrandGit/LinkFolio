@@ -1,4 +1,8 @@
-import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  GetCommand,
+  PutCommand,
+  UpdateCommand,
+} from "@aws-sdk/lib-dynamodb";
 
 import {
   dynamoDbDocumentClient,
@@ -31,6 +35,20 @@ function isConditionalCheckFailure(error: unknown) {
     "name" in error &&
     error.name === "ConditionalCheckFailedException"
   );
+}
+
+export class ProfileNotFoundError extends Error {
+  constructor() {
+    super("Profile not found");
+    this.name = "ProfileNotFoundError";
+  }
+}
+
+export class InvalidEditTokenError extends Error {
+  constructor() {
+    super("Invalid edit token");
+    this.name = "InvalidEditTokenError";
+  }
 }
 
 export async function createProfile(input: ProfileInput) {
@@ -68,4 +86,49 @@ export async function getProfileById(id: string) {
   );
 
   return (result.Item as ProfileRecord | undefined) ?? null;
+}
+
+export async function updateProfile(
+  id: string,
+  editToken: string,
+  input: ProfileInput
+) {
+  try {
+    const result = await dynamoDbDocumentClient.send(
+      new UpdateCommand({
+        TableName: getProfilesTableName(),
+        Key: { id },
+        ConditionExpression:
+          "attribute_exists(id) AND editToken = :editToken",
+        UpdateExpression:
+          "SET #name = :name, title = :title, bio = :bio, photoUrl = :photoUrl, links = :links",
+        ExpressionAttributeNames: {
+          "#name": "name",
+        },
+        ExpressionAttributeValues: {
+          ":editToken": editToken,
+          ":name": input.name,
+          ":title": input.title,
+          ":bio": input.bio,
+          ":photoUrl": input.photoUrl,
+          ":links": input.links,
+        },
+        ReturnValues: "ALL_NEW",
+      })
+    );
+
+    return result.Attributes as ProfileRecord;
+  } catch (error) {
+    if (!isConditionalCheckFailure(error)) {
+      throw error;
+    }
+
+    const existingProfile = await getProfileById(id);
+
+    if (!existingProfile) {
+      throw new ProfileNotFoundError();
+    }
+
+    throw new InvalidEditTokenError();
+  }
 }

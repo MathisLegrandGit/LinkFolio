@@ -190,4 +190,17 @@ export function parseProfileId(value: unknown) {
   });
 }
 
+export function parseProfileUpdatePayload(value: unknown) {
+  if (!isRecord(value)) {
+    throw new ProfileValidationError([
+      "Request body must be a JSON object.",
+    ]);
+  }
+
+  return {
+    editToken: parseEditToken(value.editToken),
+    profile: parseProfileInput(value),
+  };
+}
+
 export { profileRules };

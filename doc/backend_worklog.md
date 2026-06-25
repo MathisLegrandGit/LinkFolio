@@ -297,11 +297,55 @@ Error handling:
 - `404` if no profile exists for that id
 - `500` if the DynamoDB read or another backend operation fails
 
+Checks performed:
+- `npm run lint`
+- `npx tsc --noEmit`
+
+Remaining tasks:
+- create the protected update route;
+- test the create and read flow against a real AWS-backed local environment.
+
+### Session 4 - 2026-06-25
+
+Objective:
+- implement the protected backend endpoint that updates a profile.
+
+Actions completed:
+- added a DynamoDB update flow with conditional token checking;
+- added repository-level errors to distinguish missing profiles from invalid edit tokens;
+- added backend parsing for update payloads containing both profile fields and `editToken`;
+- implemented `PUT /api/profiles/[id]` in the existing dynamic route handler.
+
+Files updated:
+- `app/api/profiles/[id]/route.ts`
+- `lib/backend/profiles/repository.ts`
+- `lib/backend/profiles/validation.ts`
+- `doc/backend_worklog.md`
+
+Key decisions:
+- use `PUT /api/profiles/[id]` for full profile updates;
+- require the request body to include `editToken` together with the profile fields;
+- keep `createdAt`, `id`, and `editToken` unchanged during updates;
+- return `403` when the profile exists but the edit token is invalid;
+- use a conditional DynamoDB update to avoid updating the wrong record.
+
+Response contract chosen for now:
+- success status: `200`
+- success body:
+  - `profile`: updated public profile object without `editToken`
+
+Error handling:
+- `400` if JSON is invalid
+- `400` if the id or payload fails validation
+- `403` if the edit token is wrong
+- `404` if no profile exists for that id
+- `500` if the DynamoDB update or another backend operation fails
+
 Checks to run:
 - lint
 - TypeScript check
 
 Remaining tasks:
-- verify the read route with lint and type checks;
-- create the protected update route;
-- test the create and read flow against a real AWS-backed local environment.
+- verify the update route with lint and type checks;
+- test the full create/read/update flow against the real AWS-backed local environment;
+- finalize backend documentation and cleanup.
