@@ -1,91 +1,42 @@
-# LinkFolio
+# LinkFolio Backend Local Test Guide
 
-LinkFolio is a small full-stack profile hosting platform built with:
+## Purpose
 
-- Next.js
-- Vercel serverless route handlers
-- Amazon DynamoDB
-- AWS SDK v3
+This document explains how to run and verify the backend locally against the real AWS DynamoDB table.
 
-This repository currently contains the backend foundations and backend API flow for:
-
-- creating a profile
-- reading a public profile by id
-- updating a profile with a valid edit token
-
-## Backend Routes
-
-The backend currently exposes:
-
-- `POST /api/profiles`
-- `GET /api/profiles/:id`
-- `PUT /api/profiles/:id`
-
-## Environment Variables
+## Prerequisites
 
 Create a `.env.local` file with:
 
-```bash
+```env
 AWS_ACCESS_KEY_ID=your_access_key_id
 AWS_SECRET_ACCESS_KEY=your_secret_access_key
 AWS_REGION=your_aws_region
 DYNAMODB_TABLE_NAME=profiles
 ```
 
-The DynamoDB table must already exist and use:
+The referenced DynamoDB table must already exist and use:
 
 - table name: `profiles`
 - partition key: `id`
 
-## Run Locally
+## Start The App
 
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start the development server:
+Run:
 
 ```bash
 npm run dev
 ```
 
-The app will be available at:
+The backend should then be available at:
 
 ```txt
 http://localhost:3000
 ```
 
-## Verification Commands
+## Manual Test Flow
 
-Lint the project:
-
-```bash
-npm run lint
-```
-
-Run the TypeScript check:
-
-```bash
-npm run typecheck
-```
-
-Run both checks together:
-
-```bash
-npm run check
-```
-
-Build the app:
-
-```bash
-npm run build
-```
-
-## Backend API Test Commands
-
-### Create a profile
+### 1. Create a profile
 
 ```bash
 curl -X POST http://localhost:3000/api/profiles \
@@ -102,13 +53,31 @@ curl -X POST http://localhost:3000/api/profiles \
   }'
 ```
 
-### Read a profile
+Expected result:
+
+- status `201`
+- response includes:
+  - `profile.id`
+  - `editToken`
+  - public profile fields only
+
+### 2. Read the public profile
+
+Replace `<PROFILE_ID>` with the returned profile id:
 
 ```bash
 curl http://localhost:3000/api/profiles/<PROFILE_ID>
 ```
 
-### Update a profile
+Expected result:
+
+- status `200`
+- response contains the public profile
+- response does not contain `editToken`
+
+### 3. Update the profile with the edit token
+
+Replace `<PROFILE_ID>` and `<EDIT_TOKEN>` with the values returned at creation time:
 
 ```bash
 curl -X PUT http://localhost:3000/api/profiles/<PROFILE_ID> \
@@ -125,7 +94,23 @@ curl -X PUT http://localhost:3000/api/profiles/<PROFILE_ID> \
   }'
 ```
 
-### Check invalid edit token protection
+Expected result:
+
+- status `200`
+- response contains the updated public profile
+
+### 4. Verify the update publicly
+
+```bash
+curl http://localhost:3000/api/profiles/<PROFILE_ID>
+```
+
+Expected result:
+
+- status `200`
+- updated values are visible in the public payload
+
+### 5. Verify edit token protection
 
 ```bash
 curl -X PUT http://localhost:3000/api/profiles/<PROFILE_ID> \
@@ -142,25 +127,23 @@ curl -X PUT http://localhost:3000/api/profiles/<PROFILE_ID> \
   }'
 ```
 
-## Project Documentation
+Expected result:
 
-Useful project docs:
+- status `403`
+- response body:
 
-- [Project report](./doc/LinkFolio_Project_Report.md)
-- [Backend worklog](./doc/backend_worklog.md)
-- [Backend local test guide](./doc/backend_local_test_guide.md)
+```json
+{
+  "error": "Invalid edit token."
+}
+```
 
-## Current Status
+## Verified Result On 2026-06-25
 
-The backend flow has been verified locally against the real AWS DynamoDB table for:
+The following end-to-end flow was successfully executed locally against the AWS DynamoDB table:
 
-- create profile
-- read public profile
-- update profile with valid token
-- reject update with invalid token
-
-## Notes
-
-- The project uses `next@16.2.9`
-- AWS SDK currently works in the local environment used for development
-- A future Node.js upgrade to `>=22` is recommended for long-term AWS SDK compatibility
+- create profile: `201`
+- read created profile: `200`
+- update profile with valid edit token: `200`
+- read updated profile: `200`
+- update profile with invalid edit token: `403`
