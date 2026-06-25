@@ -349,3 +349,43 @@ Remaining tasks:
 - verify the update route with lint and type checks;
 - test the full create/read/update flow against the real AWS-backed local environment;
 - finalize backend documentation and cleanup.
+
+### Session 5 - 2026-06-25
+
+Objective:
+- verify the full backend flow against the real AWS DynamoDB environment.
+
+Actions completed:
+- verified that `.env.local` contains all required backend variables;
+- verified AWS connectivity and confirmed the `profiles` DynamoDB table is active;
+- started the local Next.js development server;
+- tested the full backend flow against the live AWS-backed environment;
+- added a reusable local backend test guide.
+
+Files created:
+- `doc/backend_local_test_guide.md`
+
+Files updated:
+- `doc/backend_worklog.md`
+
+Checks performed:
+- confirmed DynamoDB table status: `ACTIVE`
+- create profile request: `201`
+- read created profile request: `200`
+- update profile request with valid `editToken`: `200`
+- read updated profile request: `200`
+- update profile request with invalid `editToken`: `403`
+
+Test result summary:
+- backend create flow works
+- backend public read flow works
+- backend protected update flow works
+- token protection works as expected
+
+Notes:
+- the tested table name is `profiles`
+- the local test used the real AWS environment, not a mock or local DynamoDB container
+
+Remaining tasks:
+- finalize backend documentation and cleanup;
+- optionally align the project report with the backend implementation details if needed.
