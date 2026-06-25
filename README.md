@@ -1,36 +1,166 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LinkFolio
 
-## Getting Started
+LinkFolio is a small full-stack profile hosting platform built with:
 
-First, run the development server:
+- Next.js
+- Vercel serverless route handlers
+- Amazon DynamoDB
+- AWS SDK v3
+
+This repository currently contains the backend foundations and backend API flow for:
+
+- creating a profile
+- reading a public profile by id
+- updating a profile with a valid edit token
+
+## Backend Routes
+
+The backend currently exposes:
+
+- `POST /api/profiles`
+- `GET /api/profiles/:id`
+- `PUT /api/profiles/:id`
+
+## Environment Variables
+
+Create a `.env.local` file with:
+
+```bash
+AWS_ACCESS_KEY_ID=your_access_key_id
+AWS_SECRET_ACCESS_KEY=your_secret_access_key
+AWS_REGION=your_aws_region
+DYNAMODB_TABLE_NAME=profiles
+```
+
+The DynamoDB table must already exist and use:
+
+- table name: `profiles`
+- partition key: `id`
+
+## Run Locally
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app will be available at:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```txt
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Verification Commands
 
-## Learn More
+Lint the project:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run lint
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Run the TypeScript check:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run typecheck
+```
 
-## Deploy on Vercel
+Run both checks together:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run check
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Build the app:
+
+```bash
+npm run build
+```
+
+## Backend API Test Commands
+
+### Create a profile
+
+```bash
+curl -X POST http://localhost:3000/api/profiles \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Maxime Test",
+    "title": "Backend Validation",
+    "bio": "Profile created to validate the LinkFolio backend flow.",
+    "photoUrl": "https://example.com/avatar.png",
+    "links": [
+      { "label": "Portfolio", "url": "https://example.com" },
+      { "label": "GitHub", "url": "https://github.com/example" }
+    ]
+  }'
+```
+
+### Read a profile
+
+```bash
+curl http://localhost:3000/api/profiles/<PROFILE_ID>
+```
+
+### Update a profile
+
+```bash
+curl -X PUT http://localhost:3000/api/profiles/<PROFILE_ID> \
+  -H "Content-Type: application/json" \
+  -d '{
+    "editToken": "<EDIT_TOKEN>",
+    "name": "Maxime Test Updated",
+    "title": "Backend Validation Updated",
+    "bio": "Profile updated through the protected endpoint.",
+    "photoUrl": "https://example.com/avatar-updated.png",
+    "links": [
+      { "label": "Main Site", "url": "https://example.com/home" }
+    ]
+  }'
+```
+
+### Check invalid edit token protection
+
+```bash
+curl -X PUT http://localhost:3000/api/profiles/<PROFILE_ID> \
+  -H "Content-Type: application/json" \
+  -d '{
+    "editToken": "invalid-token",
+    "name": "Rejected Update",
+    "title": "Rejected Update",
+    "bio": "Rejected Update",
+    "photoUrl": "https://example.com/rejected.png",
+    "links": [
+      { "label": "Rejected", "url": "https://example.com/rejected" }
+    ]
+  }'
+```
+
+## Project Documentation
+
+Useful project docs:
+
+- [Project report](./doc/LinkFolio_Project_Report.md)
+- [Backend worklog](./doc/backend_worklog.md)
+- [Backend local test guide](./doc/backend_local_test_guide.md)
+
+## Current Status
+
+The backend flow has been verified locally against the real AWS DynamoDB table for:
+
+- create profile
+- read public profile
+- update profile with valid token
+- reject update with invalid token
+
+## Notes
+
+- The project uses `next@16.2.9`
+- AWS SDK currently works in the local environment used for development
+- A future Node.js upgrade to `>=22` is recommended for long-term AWS SDK compatibility

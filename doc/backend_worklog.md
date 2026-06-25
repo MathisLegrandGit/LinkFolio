@@ -254,12 +254,11 @@ Error handling:
 - `400` if the payload fails validation
 - `500` if DynamoDB write or another unexpected backend error fails
 
-Checks to run:
-- lint
-- TypeScript check
+Checks performed:
+- `npm run lint`
+- `npx tsc --noEmit`
 
 Remaining tasks:
-- verify the create route with lint and type checks;
 - create the public profile read route;
 - create the protected update route.
 
@@ -341,12 +340,11 @@ Error handling:
 - `404` if no profile exists for that id
 - `500` if the DynamoDB update or another backend operation fails
 
-Checks to run:
-- lint
-- TypeScript check
+Checks performed:
+- `npm run lint`
+- `npx tsc --noEmit`
 
 Remaining tasks:
-- verify the update route with lint and type checks;
 - test the full create/read/update flow against the real AWS-backed local environment;
 - finalize backend documentation and cleanup.
 
@@ -388,4 +386,30 @@ Notes:
 
 Remaining tasks:
 - finalize backend documentation and cleanup;
+- optionally align the project report with the backend implementation details if needed.
+
+### Session 6 - 2026-06-25
+
+Objective:
+- finalize backend cleanup and centralize the project usage documentation.
+
+Actions completed:
+- replaced the default scaffold README with a project-specific backend README;
+- added reusable package scripts for `typecheck` and grouped verification with `check`;
+- updated the worklog so completed checks are recorded consistently.
+
+Files updated:
+- `README.md`
+- `package.json`
+- `doc/backend_worklog.md`
+
+Checks performed:
+- `npm run check`
+- `npm run build`
+
+Result:
+- backend documentation is now centralized and usable without relying on chat history;
+- the repository now has a simple verification workflow for future sessions.
+
+Remaining tasks:
 - optionally align the project report with the backend implementation details if needed.
