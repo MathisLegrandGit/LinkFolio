@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 import { createProfile } from "@/lib/backend/profiles/repository";
-import { toPublicProfile } from "@/lib/backend/profiles/serializers";
 import {
   parseProfileInput,
   ProfileValidationError,
@@ -10,8 +9,8 @@ import {
 export const runtime = "nodejs";
 
 type CreateProfileSuccessResponse = {
+  id: string;
   editToken: string;
-  profile: ReturnType<typeof toPublicProfile>;
 };
 
 type ErrorResponse = {
@@ -43,10 +42,7 @@ export async function POST(request: Request) {
     const profile = await createProfile(input);
 
     return NextResponse.json<CreateProfileSuccessResponse>(
-      {
-        editToken: profile.editToken,
-        profile: toPublicProfile(profile),
-      },
+      { id: profile.id, editToken: profile.editToken },
       { status: 201 }
     );
   } catch (error) {

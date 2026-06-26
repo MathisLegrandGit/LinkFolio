@@ -17,6 +17,7 @@ export const runtime = "nodejs";
 
 type GetProfileSuccessResponse = {
   profile: ReturnType<typeof toPublicProfile>;
+  isEditable: boolean;
 };
 
 type ErrorResponse = {
@@ -32,7 +33,7 @@ function jsonErrorResponse(
 }
 
 export async function GET(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -44,8 +45,12 @@ export async function GET(
       return jsonErrorResponse({ error: "Profile not found." }, 404);
     }
 
+    const token = new URL(request.url).searchParams.get("token");
+    const isEditable = token !== null && token === profile.editToken;
+
     return NextResponse.json<GetProfileSuccessResponse>({
       profile: toPublicProfile(profile),
+      isEditable,
     });
   } catch (error) {
     if (error instanceof ProfileValidationError) {

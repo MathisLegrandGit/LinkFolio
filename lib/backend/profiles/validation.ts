@@ -198,7 +198,7 @@ export function parseProfileUpdatePayload(value: unknown) {
   }
 
   return {
-    editToken: parseEditToken(value.editToken),
+    editToken: parseEditToken(value.token),
     profile: parseProfileInput(value),
   };
 }
