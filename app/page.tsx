@@ -287,7 +287,7 @@ export default function CreatePage() {
               <span className="italic text-accent">ready.</span>
             </h1>
             <p className="mt-4 max-w-md text-[15px] leading-relaxed text-ink-muted">
-              Share the public link with the world. Keep the edit link private —
+              Share the public link with the world. Keep the edit link private
               anyone who has it can change your profile.
             </p>
 
@@ -302,7 +302,7 @@ export default function CreatePage() {
                     href={`/p/${result.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="lf-btn-soft"
+                    className="lf-btn-soft relative before:absolute before:-inset-4 before:content-[''] sm:before:hidden"
                   >
                     Open <ArrowIcon />
                   </a>
@@ -340,7 +340,7 @@ export default function CreatePage() {
                     href={`/p/${result.id}?token=${result.editToken}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="lf-btn-soft"
+                    className="lf-btn-soft relative before:absolute before:-inset-4 before:content-[''] sm:before:hidden"
                   >
                     Open <ArrowIcon />
                   </a>
