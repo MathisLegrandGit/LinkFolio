@@ -50,7 +50,6 @@ function LogoMark() {
         </linearGradient>
       </defs>
       <rect width="40" height="40" rx="11" fill="url(#lf-logo)" />
-      <ellipse cx="13" cy="9" rx="16" ry="9" fill="#ffffff" opacity="0.16" />
       {/* link A */}
       <rect
         x="7.5"
@@ -276,14 +275,14 @@ export default function CreatePage() {
       <main className="relative z-10 flex min-h-screen items-center justify-center overflow-hidden px-6 py-16">
         <div className="lf-glow left-1/2 top-0 h-[420px] w-[520px] -translate-x-1/2 animate-glow" />
 
-        <div className="grid w-full max-w-5xl items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid w-full min-w-0 max-w-5xl items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
           {/* success copy + share links */}
-          <div className="animate-fade-up">
+          <div className="min-w-0 animate-fade-up">
             <span className="lf-eyebrow">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" />
               You&apos;re live
             </span>
-            <h1 className="mt-4 font-display text-5xl leading-[1.05] text-ink sm:text-6xl">
+            <h1 className="mt-4 font-display text-4xl leading-[1.05] text-ink sm:text-6xl">
               Your LinkFolio is{' '}
               <span className="italic text-accent">ready.</span>
             </h1>
@@ -309,13 +308,13 @@ export default function CreatePage() {
                   </a>
                 </div>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 truncate rounded-lg bg-surface-2 px-3 py-2 font-mono text-[13px] text-ink-muted">
+                  <code className="min-w-0 flex-1 truncate rounded-lg bg-surface-2 px-3 py-2 font-mono text-[13px] text-ink-muted">
                     {publicUrl || `/p/${result.id}`}
                   </code>
                   <button
                     type="button"
                     onClick={() => copyToClipboard(publicUrl, 'public')}
-                    className="lf-btn-ghost px-3 py-2 text-[13px]"
+                    className="lf-btn-ghost shrink-0 px-3 py-2 text-[13px]"
                   >
                     {copied === 'public' ? 'Copied' : 'Copy'}
                   </button>
@@ -347,13 +346,13 @@ export default function CreatePage() {
                   </a>
                 </div>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 truncate rounded-lg bg-surface-2 px-3 py-2 font-mono text-[13px] text-ink-muted">
+                  <code className="min-w-0 flex-1 truncate rounded-lg bg-surface-2 px-3 py-2 font-mono text-[13px] text-ink-muted">
                     {editUrl || `/p/${result.id}?token=…`}
                   </code>
                   <button
                     type="button"
                     onClick={() => copyToClipboard(editUrl, 'edit')}
-                    className="lf-btn-ghost px-3 py-2 text-[13px]"
+                    className="lf-btn-ghost shrink-0 px-3 py-2 text-[13px]"
                   >
                     {copied === 'edit' ? 'Copied' : 'Copy'}
                   </button>
@@ -363,7 +362,7 @@ export default function CreatePage() {
           </div>
 
           {/* live preview of what they just made */}
-          <div className="flex justify-center animate-scale-in lg:justify-end" style={{ animationDelay: '120ms' }}>
+          <div className="flex min-w-0 justify-center animate-scale-in lg:justify-end" style={{ animationDelay: '120ms' }}>
             <LivePreview
               name={name}
               title={title}

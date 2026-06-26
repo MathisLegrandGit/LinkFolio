@@ -34,12 +34,12 @@
     --ink-faint: #756c59;
     --line: #2c2718;
     --line-strong: #3c3621;
-    --accent: #f0b92e;
-    --accent-strong: #d49a1c;
+    --accent: #ffd92e;
+    --accent-strong: #ffcf1a;
     --accent-soft: #2e2510;
     --accent-tint: #1f1a0e;
     --accent-foreground: #231a05;
-    --glow: 240 185 46;
+    --glow: 255 217 46;
   }
 }
 
