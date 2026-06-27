@@ -302,7 +302,7 @@ export default function CreatePage() {
                     href={`/p/${result.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="lf-btn-soft relative before:absolute before:-inset-4 before:content-[''] sm:before:hidden"
+                    className="lf-btn-soft"
                   >
                     Open <ArrowIcon />
                   </a>
@@ -340,7 +340,7 @@ export default function CreatePage() {
                     href={`/p/${result.id}?token=${result.editToken}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="lf-btn-soft relative before:absolute before:-inset-4 before:content-[''] sm:before:hidden"
+                    className="lf-btn-soft"
                   >
                     Open <ArrowIcon />
                   </a>
